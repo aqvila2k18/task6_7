@@ -1,9 +1,6 @@
-EXTERNAL_IF=”ens3”
-INTERNAL_IF=”ens4”
-MANAGEMENT_IF=”ens5”
-VLAN=278
-EXT_IP=”DHCP” èëè ïàðà ïàðàìåòðîâ (EXT_IP=172.16.1.1/24, EXT_GW=172.16.1.254)
-INT_IP=10.0.0.1/24
-VLAN_IP=YY.YY.YY.YY/24
-NGINX_PORT=AAAA
-APACHE_VLAN_IP=ZZ.ZZ.ZZ.ZZ
+#!/bin/bash
+#apt-get update >> /dev/null 2>&1
+#apt-get install -y vlan >> /dev/null 2>&1
+s_path=$(cd "$(dirname $0)" && pwd)
+source $s_path'/vm1.config'
+

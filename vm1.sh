@@ -40,5 +40,27 @@ ip addr flush $INTERNAL_IF
 systemctl restart networking.service
 
 # install nginx
-apt-get update >> /dev/null 2>&1
-apt-get install nginx -y >> /dev/null 2>&1 
+#apt-get update >> /dev/null 2>&1
+#apt-get install nginx -y >> /dev/null 2>&1 
+
+# gen cert
+inet=$(ifconfig $EXTERNAL_IF | grep 'inet addr' | awk '{print $2}' | awk -F":" '{print $2}')
+fqdn=$(hostname -f)
+echo '[req]' > /tmp/openssl.cnf
+echo 'prompt = no' >> /tmp/openssl.cnf
+echo 'encrypt_key = no' >> /tmp/openssl.cnf
+echo 'distinguished_name = dn' >> /tmp/openssl.cnf
+echo 'req_extensions = ext' >> /tmp/openssl.cnf
+echo '[dn]' >> /tmp/openssl.cnf
+echo 'C = UA' >> /tmp/openssl.cnf
+echo 'L = Kharkiv' >> /tmp/openssl.cnf
+echo "CN = $fqdn" >> /tmp/openssl.cnf
+echo 'O = aqvila2k18 Inc' >> /tmp/openssl.cnf
+echo '[ext]' >> /tmp/openssl.cnf
+echo "subjectAltName = IP:$inet" >> /tmp/openssl.cnf
+
+openssl req -new -newkey rsa:4096 -nodes -keyout /etc/ssl/root-ca.key -x509 -days 180 -subj "/C=UA/ST=Kharkiv/O=aqvila2k18 Cert Service/CN=aqvila2k18 Authority" -out /etc/ssl/certs/root-ca.crt>> /dev/null 2>&1
+openssl genrsa -out /etc/ssl/web.key 4096 >> /dev/null 2>&1
+openssl req -new -config /tmp/openssl.cnf -newkey rsa:2048 -keyout /etc/ssl/web.key -out /etc/ssl/web.csr >> /dev/null 2>&1
+openssl x509 -req -days 30 -in /etc/ssl/web.csr -CA /etc/ssl/certs/root-ca.crt -CAkey /etc/ssl/root-ca.key -set_serial 01 -out /etc/ssl/certs/web.crt -extfile /tmp/openssl.cnf -extensions ext >> /dev/null 2>&1
+cat /etc/ssl/certs/root-ca.crt >> /etc/ssl/certs/web.crt

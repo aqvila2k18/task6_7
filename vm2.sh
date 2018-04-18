@@ -1,9 +1,24 @@
-EXTERNAL_IF=”ens3”
-INTERNAL_IF=”ens4”
-MANAGEMENT_IF=”ens5”
-VLAN=278
-EXT_IP=”DHCP” èëè ïàðà ïàðàìåòðîâ (EXT_IP=172.16.1.1/24, EXT_GW=172.16.1.254)
-INT_IP=10.0.0.1/24
-VLAN_IP=YY.YY.YY.YY/24
-NGINX_PORT=AAAA
-APACHE_VLAN_IP=ZZ.ZZ.ZZ.ZZ
+#!/bin/bash
+modprobe 8021q >> /dev/null 2>&1
+s_path=$(cd "$(dirname $0)" && pwd)
+source $s_path'/vm1.config'
+echo 'source /etc/network/interfaces.d/*' > /etc/network/interfaces
+echo 'auto lo' >> /etc/network/interfaces
+echo 'iface lo inet loopback' >> /etc/network/interfaces
+
+# Config INTERNAL_IF
+
+echo "auto $INTERNAL_IF" >> /etc/network/interfaces
+echo "iface $INTERNAL_IF inet static" >> /etc/network/interfaces
+echo "address $INT_IP" >> /etc/network/interfaces
+
+# Config VLAN
+
+echo "auto $INTERNAL_IF.$VLAN" >> /etc/network/interfaces
+echo "iface $INTERNAL_IF.$VLAN inet static" >> /etc/network/interfaces
+echo "address $VLAN_IP" >> /etc/network/interfaces
+echo "vlan_raw_device $INTERNAL_IF" >> /etc/network/interfaces
+
+ip addr flush $EXTERNAL_IF
+ip addr flush $INTERNAL_IF
+systemctl restart networking.service

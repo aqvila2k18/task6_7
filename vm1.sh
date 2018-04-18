@@ -52,7 +52,7 @@ echo 'L = Kharkiv' >> /tmp/openssl.cnf
 echo "CN = $fqdn" >> /tmp/openssl.cnf
 echo 'O = aqvila2k18 Inc' >> /tmp/openssl.cnf
 echo '[ext]' >> /tmp/openssl.cnf
-echo "subjectAltName = IP:$inet" >> /tmp/openssl.cnf
+echo "subjectAltName = IP:$inet,DNS:$fqdn" >> /tmp/openssl.cnf
 
 openssl req -new -newkey rsa:4096 -nodes -keyout /etc/ssl/root-ca.key -x509 -days 180 -subj "/C=UA/ST=Kharkiv/O=aqvila2k18 Cert Service/CN=aqvila2k18 Authority" -out /etc/ssl/certs/root-ca.crt>> /dev/null 2>&1
 openssl genrsa -out /etc/ssl/web.key 4096 >> /dev/null 2>&1

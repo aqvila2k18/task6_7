@@ -72,3 +72,9 @@ iptables -A FORWARD -i $EXTERNAL_IF -o $INTERNAL_IF -s $INT_IP -m conntrack --ct
 iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 iptables -A POSTROUTING -t nat -j MASQUERADE
 echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# config nginx
+
+cp $s_path'/default' /etc/nginx/sites-enabled/
+sed -i "s/APACHE_VLAN_IP/$APACHE_VLAN_IP/" /etc/nginx/sites-enabled/default
+sed -i "s/NGINX_PORT/$NGINX_PORT/" /etc/nginx/sites-enabled/default

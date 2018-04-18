@@ -1,9 +1,9 @@
 upstream vm2 {
-    server 10.130.227.11;
+    server APACHE_VLAN_IP;
 }
 
 server {
-    listen 443 ssl;
+    listen NGINX_PORT ssl;
     server_name vm2;
 
     ssl on;
@@ -20,7 +20,7 @@ server {
     add_header Strict-Transport-Security "max-age=31536000";
 
     location / {
-        proxy_pass http://mywebapp1;
+        proxy_pass http://APACHE_VLAN_IP;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

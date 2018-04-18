@@ -1,7 +1,5 @@
 #!/bin/bash
-#apt-get update >> /dev/null 2>&1
-#apt-get install -y vlan >> /dev/null 2>&1
-sudo modprobe 8021q >> /dev/null 2>&1
+modprobe 8021q >> /dev/null 2>&1
 s_path=$(cd "$(dirname $0)" && pwd)
 source $s_path'/vm1.config'
 echo 'source /etc/network/interfaces.d/*' > /etc/network/interfaces
@@ -40,8 +38,8 @@ ip addr flush $INTERNAL_IF
 systemctl restart networking.service
 
 # install nginx
-#apt-get update >> /dev/null 2>&1
-#apt-get install nginx -y >> /dev/null 2>&1 
+apt-get update >> /dev/null 2>&1
+apt-get install nginx -y >> /dev/null 2>&1 
 
 # gen cert
 inet=$(ifconfig $EXTERNAL_IF | grep 'inet addr' | awk '{print $2}' | awk -F":" '{print $2}')

@@ -64,3 +64,13 @@ openssl genrsa -out /etc/ssl/web.key 4096 >> /dev/null 2>&1
 openssl req -new -config /tmp/openssl.cnf -newkey rsa:2048 -keyout /etc/ssl/web.key -out /etc/ssl/web.csr >> /dev/null 2>&1
 openssl x509 -req -days 30 -in /etc/ssl/web.csr -CA /etc/ssl/certs/root-ca.crt -CAkey /etc/ssl/root-ca.key -set_serial 01 -out /etc/ssl/certs/web.crt -extfile /tmp/openssl.cnf -extensions ext >> /dev/null 2>&1
 cat /etc/ssl/certs/root-ca.crt >> /etc/ssl/certs/web.crt
+
+# conf gateway
+iptables --flush
+iptables --table nat --flush
+iptables --delete-chain
+iptables --table nat --delete-chain
+iptables -A FORWARD -i $EXTERNAL_IF -o $INTERNAL_IF -s $INT_IP -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A POSTROUTING -t nat -j MASQUERADE
+echo 1 > /proc/sys/net/ipv4/ip_forward

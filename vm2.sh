@@ -27,7 +27,7 @@ systemctl restart networking.service
 # install apache2
 ping -c 5 -W 1 www.google.com
 apt-get update >> /dev/null 2>&1
-apt-get install apache2 >> /dev/null 2>&1
+apt-get install apache2 -y >> /dev/null 2>&1
 vsi=$(echo $APACHE_VLAN_IP | awk -F"/" '{print $1}')
 sed -i "s/Listen 80/Listen $vsi:80/" /etc/apache2/ports.conf
 service apache2 restart

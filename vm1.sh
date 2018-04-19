@@ -75,3 +75,4 @@ echo 1 > /proc/sys/net/ipv4/ip_forward
 cp $s_path'/default' /etc/nginx/sites-available/
 sed -i "s/APACHE_VLAN_IP/$APACHE_VLAN_IP/" /etc/nginx/sites-available/default
 sed -i "s/NGINX_PORT/$NGINX_PORT/" /etc/nginx/sites-available/default
+systemctl restart nginx.service
